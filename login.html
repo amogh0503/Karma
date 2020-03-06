@@ -290,7 +290,7 @@ res=await res.json();		//Database response
 if(res.code===202)
 {window.location = "./category.html"  //redirecting user to login page using relative addressing
 }
-else{
+else if(res.code==203){
 	emailH2.style.display='inline';			//Login Error
 }
 }

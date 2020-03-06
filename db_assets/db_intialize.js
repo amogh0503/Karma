@@ -14,12 +14,12 @@ const getUser = (request, response) => {
       if (error) {
         throw error
       }
-      else if(results.length==1)
+      else if(results.rowCount==1)
         {
           response.json({code:202, status:'Login Success'});
         }
       else{
-        console.log(results.length);
+        response.json({code:203,status:'Login Failed'})
       }
         
   })
