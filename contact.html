@@ -135,25 +135,31 @@
 					</div>
 				</div>
 				<div class="col-lg-9">
-					<form class="row contact_form" action="contact_process.php" method="post" id="contactForm" novalidate="novalidate">
+					<div id=contactH class="col-md-12 form-group" style="color: red; display: none;">We will contact you shortly</div>
+
+					<form class="row contact_form" action="contact_process.php" method="post" id="formData" novalidate="novalidate">
 						<div class="col-md-6">
 							<div class="form-group">
 								<input type="text" class="form-control" id="name" name="name" placeholder="Enter your name" onfocus="this.placeholder = ''" onblur="this.placeholder = 'Enter your name'">
 							</div>
+							<div id=nameH class="col-md-12 form-group" style="color: red; display: none;">Name is Required</div>
 							<div class="form-group">
 								<input type="email" class="form-control" id="email" name="email" placeholder="Enter email address" onfocus="this.placeholder = ''" onblur="this.placeholder = 'Enter email address'">
 							</div>
+							<div id=emailH class="col-md-12 form-group" style="color: red; display: none;">Email is incorrect</div>
 							<div class="form-group">
 								<input type="text" class="form-control" id="subject" name="subject" placeholder="Enter Subject" onfocus="this.placeholder = ''" onblur="this.placeholder = 'Enter Subject'">
 							</div>
+							<div id=subjectH class="col-md-12 form-group" style="color: red; display: none;">Subject is Required</div>
 						</div>
 						<div class="col-md-6">
 							<div class="form-group">
 								<textarea class="form-control" name="message" id="message" rows="1" placeholder="Enter Message" onfocus="this.placeholder = ''" onblur="this.placeholder = 'Enter Message'"></textarea>
 							</div>
+							<div id=messageH class="col-md-12 form-group" style="color: red; display: none;">Message is Required</div>
 						</div>
 						<div class="col-md-12 text-right">
-							<button type="submit" value="submit" class="primary-btn">Send Message</button>
+							<button type="button" value="submit" class="primary-btn" onclick="isValid() && postData() && clearForm()">Send Message</button>
 						</div>
 					</form>
 				</div>
@@ -287,5 +293,65 @@
 	<script src="js/gmaps.min.js"></script>
 	<script src="js/main.js"></script>
 </body>
+
+<script>
+	async function postData(url = '/contactus', userDetails) {
+
+client = {
+	fname:formData.name.value,
+	email:formData.email.value,
+	subject:formData.subject.value,
+	message:formData.message.value
+};
+
+userDetails = JSON.stringify(client);
+
+res=await fetch("http://localhost:3001/contactus/",
+                {
+                    method:'POST',  headers: {
+                'Accept': 'application/json',
+                'Content-Type': 'application/json' 
+				},body:userDetails});
+
+res=await res.json();		//Database response
+if(res.code===204)
+{
+	contactH.style.display='block';
+}
+
+}
+
+
+function clearForm(){
+	nameH.style.display='none';
+	emailH.style.display='none';
+	subjectH.style.display='none';
+	messageH.style.display='none';}
+function isValid(){
+	var regex = /^[a-zA-Z0-9.!#$%&’*+/=?^_`{|}~-]+@[a-zA-Z0-9-]+(?:\.[a-zA-Z0-9-]+)*$/;							//Email Validation for Registration
+	if(formData.name.value === ""){
+	
+		nameH.style.display='block';
+			return false;
+	}
+	else if (!regex.test(formData.email.value)){	// If email not in proper error show warning
+	
+			emailH.style.display='block';
+			return false;
+	}
+	else if (formData.subject.value ===""){ 
+	
+		subjectH.style.display='block';
+	return false;
+	}
+	
+	else if(formData.message.value === ""){		
+		messageH.style.display='block';		
+			return false;
+	}
+	return true;
+} 
+</script>
+
 
 </html>

@@ -15,7 +15,7 @@ app.use(bodyParser.json({extended : true}));
 
 app.get('/get',(req,res)=>{console.log("IN");res.end("o");});
 app.post('/register',db_functions.createUser);
-app.post('/login2',db_functions.getUser) ;
-
+app.post('/login',db_functions.getUser) ;
+app.post('/contactus',db_functions.contactUser);
 
 app.listen(port, () => console.log(`Example app listening on port ${port}!`))

@@ -131,6 +131,12 @@
 								<p id='passH' style="text-align: right; color: red; margin-bottom: 0px; display: none;">
 								Password is Required
 								</p>
+								<p id='passH2' style="text-align: right; color: red; margin-bottom: 0px; display: none;">
+									Password length must be 6 atleast
+									</p>
+								<p id='passH3' style="text-align: right; color: red; margin-bottom: 0px; display: none;">
+									Password must contain atleast 1 lowercase and <br>1 uppercase or 1 numeric character
+									</p>
 							</div>
 							<div class="col-md-12 form-group">	
 								<input type="number" class="form-control" id="name" name="phone" placeholder="Phone Number" onfocus="this.placeholder = ''" onblur="this.placeholder = 'Phone Number'" required>
@@ -269,7 +275,8 @@ Copyright &copy;<script>document.write(new Date().getFullYear());</script> All r
 
 
 function isValid(){
-	var regex = /^[a-zA-Z0-9.!#$%&’*+/=?^_`{|}~-]+@[a-zA-Z0-9-]+(?:\.[a-zA-Z0-9-]+)*$/;							//Validation for Registration
+	var regex = /^[a-zA-Z0-9.!#$%&’*+/=?^_`{|}~-]+@[a-zA-Z0-9-]+(?:\.[a-zA-Z0-9-]+)*$/;							//Email Validation for Registration
+	var mediumRegex = new RegExp("^(((?=.*[a-z])(?=.*[A-Z]))|((?=.*[a-z])(?=.*[0-9]))|((?=.*[A-Z])(?=.*[0-9])))(?=.{6,})");  //Password Vaildation for Registration
 	if(formData.fname.value === ""){
 	
 		fnameH.style.display='block';
@@ -279,6 +286,17 @@ function isValid(){
 
 		passH.style.display='block';
 			return false;
+	}
+	else if (formData.password.value.length<6){
+		passH.style.display='none';
+		passH2.style.display='block';
+		return false;
+	}
+	else if (!mediumRegex.test(formData.password.value)){
+		passH.style.display='none';
+		passH2.style.display='none';
+		passH3.style.display='block';
+		return false;
 	}
 	else if (formData.phone.value ===""){ 
 	

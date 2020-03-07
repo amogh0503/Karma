@@ -144,7 +144,7 @@
 								</div>
 							</div>
 							<div class="col-md-12 form-group">
-								<button type="button"  class="primary-btn" onclick="isValid() && postData() && clearForm()">Log In</button>
+								<button type="button"  class="primary-btn" onclick="isValid() && postData()">Log In</button>
 								<a href="#">Forgot Password?</a>
 							</div>
 						</form>
@@ -277,21 +277,21 @@ client = {
 
 userDetails = JSON.stringify(client);
 
-res=await fetch("http://localhost:3001/login2/",
+res=await fetch("http://localhost:3001/login/",
                 {
                     method:'POST',  headers: {
                 'Accept': 'application/json',
                 'Content-Type': 'application/json' 
 				},body:userDetails});
 
-
-debugger
 res=await res.json();		//Database response
 if(res.code===202)
 {window.location = "./category.html"  //redirecting user to login page using relative addressing
 }
 else if(res.code==203){
+	formData.pass.value="";
 	emailH2.style.display='inline';			//Login Error
+	
 }
 }
 

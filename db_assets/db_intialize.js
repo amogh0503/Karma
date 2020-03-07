@@ -1,5 +1,6 @@
 const Pool = require('pg').Pool
 const bcrypt = require('bcryptjs');
+const saltRounds = 10;
 const pool = new Pool({
     user:'postgres',
     host: 'localhost',
@@ -10,18 +11,35 @@ const pool = new Pool({
 
 const getUser = (request, response) => {
   const {email,password} = request.body
-    pool.query('SELECT password,email FROM users where email = $1 AND password = $2',[email,password], (error, results) => {
+    pool.query('SELECT password FROM users where email = $1',[email], (error, results) => {
+      user = (results.rows[0])
       if (error) {
         throw error
       }
-      else if(results.rowCount==1)
-        {
-          response.json({code:202, status:'Login Success'});
+      else
+      { bcrypt.compare(password, user.password, function (err, results) {
+        if (results == true) {
+          response.json({code:202, status:'Login Success'});  
+          } 
+        else {
+            response.json({code:203, status:'Login failure'});
         }
-      else{
-        response.json({code:203,status:'Login Failed'})
-      }
+      })
         
+        }
+  }) 
+}
+
+
+const contactUser = (request, response) => {
+   const {fname,email,subject,message} = request.body
+      pool.query('INSERT INTO contacts(fname,email,subject,message) VALUES($1,$2,$3,$4)',[fname,email,subject,message],(error,results) => {
+        if(error){
+          throw error
+        }
+        else{
+          response.json({code:204, status:'Contact Success'});
+      } 
   })
 }
 
@@ -32,21 +50,27 @@ const getUserById = (request, response) => {
       if (error) {
         throw error
       }
-      response.status(200).json(results.rows)
-    })
+      else {
+        response.status(200).json(results.rows)
+      }
+      })
   }
+
 
 const createUser = (request, response) => {
     const { fname, password, phone, email, address} = request.body
-  
-    pool.query('INSERT INTO users (fname, password, phone, email, address) VALUES ($1, $2,$3,$4,$5)', [fname, password, phone, email, address], (error, results) => {
+    bcrypt.hash(password, saltRounds, function (err,   hash) {
+    pool.query('INSERT INTO users (fname, password, phone, email, address) VALUES ($1, $2,$3,$4,$5)', [fname, hash, phone, email, address], (error, results) => {
       if (error) { 
         throw error
       }
-      response.json({code:201,status:'created'});
+      else{
+        response.json({code:201,status:'created'});
       //response.status(201).send(`User added with ID: ${results.insertId}`)
+      }
     })
-  }
+  })
+}
 
   const updateUser = (request, response) => {
     const id = parseInt(request.params.id)
@@ -80,6 +104,7 @@ const createUser = (request, response) => {
 
   module.exports = {
     getUser,
+    contactUser,
     getUserById,
     createUser,
     updateUser,
